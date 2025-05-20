@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'VT323', monospace; /* Monospace font */
+            background-color: #0D0D0D; /* Dark background */
+            color: #00FF41; /* Green text */
+            margin: 0;
+            padding: 0;
+            display: flex; /* For centering content */
+            flex-direction: column; /* Stack header, main, footer */
+            align-items: center; /* Center content horizontally */
+            min-height: 100vh; /* Full viewport height */
+            font-size: 1.2rem; /* Base font size */
+        }
+
+        .container {
+            width: 100%;
+            max-width: 720px; /* Default max-width for blog-like column on standard desktops */
+            padding: 2rem; /* Padding around the content */
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+            padding-bottom: 2rem; /* Ensure some padding at the very bottom */
+        }
+
+        header {
+            width: 100%;
+            /* border-bottom: 2px solid #00FF41; */ /* Removed flat green border */
+            padding-top: 1rem; /* Added some top padding for spacing */
+            padding-bottom: 1rem; /* Adjusted padding */
+            margin-bottom: 0.75rem; /* Further reduced margin for separation from main content */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 3.2rem; /* Larger site title */
+            margin: 0;
+            color: #00FF41;
+            font-weight: normal; /* Ensure H1 is not bold if font defaults to it */
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            gap: 1.8rem; /* Adjusted space between nav items */
+        }
+
+        nav a {
+            color: #76F8B2; /* Lighter green for links */
+            text-decoration: none;
+            font-size: 1.5rem; /* Increased nav item font size */
+            padding: 0.3rem 0.6rem; /* Adjusted padding for hover effect */
+            border: 1px solid transparent; /* Transparent border for spacing consistency */
+            transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        nav a:hover,
+        nav a:focus {
+            color: #0D0D0D; /* Dark text on hover */
+            background-color: #00FF41; /* Green background on hover */
+            border-color: #00FF41; /* Green border on hover */
+            outline: none;
+        }
+
+        main {
+            width: 100%;
+            padding-bottom: 2rem; /* Add some space at the bottom of main content */
+        }
+
+        .content-section {
+            background-color: #0D0D0D; /* Same as body background */
+            border: 2px solid #00FF41; /* Flat green border */
+            /* border-radius: 8px; */ /* Removed rounded corners */
+            padding: 2.5rem; /* Increased padding */
+            margin-bottom: 2.5rem; /* Increased margin */
+            /* box-shadow: 0 0 15px rgba(0, 255, 65, 0.2); */ /* Removed box shadow */
+        }
+        /* Remove margin from last content section */
+        .content-section:last-child {
+            margin-bottom: 0;
+        }
+
+
+        .content-section h2 {
+            font-size: 2.4rem; /* Increased section title font size */
+            font-weight: normal; /* Ensure headings are not bold by default */
+            /* border-bottom: 1px solid #00FF41; */ /* REMOVED Separator for section titles */
+            padding-bottom: 0.25rem; /* Reduced padding-bottom as border is gone */
+            margin-top: 0; /* Remove default top margin for h2 */
+            margin-bottom: 0.75rem; /* Reduced margin between heading and paragraph */
+        }
+
+        .content-section p,
+        .content-section ul {
+            line-height: 1.8; /* Adjusted line height for better readability */
+            font-size: 1.6rem; /* Further increased content text font size */
+            margin-bottom: 1.2rem; /* Adjusted margin */
+            font-weight: normal; /* Ensure paragraph text is not bold */
+        }
+        .content-section ul {
+            list-style-type: square; /* Simple list style */
+            padding-left: 1.8rem; /* Adjusted padding */
+        }
+        .content-section a {
+            color: #76F8B2;
+            text-decoration: underline;
+        }
+        .content-section a:hover {
+            color: #00FF41;
+        }
+
+        /* Footer styles removed */
+
+        /* Responsive adjustments */
+
+        /* For very large screens */
+        @media (min-width: 1600px) {
+            .container {
+                max-width: 1536px; /* Wider container for screens 1600px and up */
+            }
+        }
+
+        /* Media query for screens up to 720px (the default max-width of container for standard desktops) */
+        /* This ensures that for screens smaller than 720px, the container takes full width with adjusted padding */
+        @media (max-width: 720px) {
+            .container {
+                padding: 1.5rem; /* Adjust padding for screens that are narrower than max-width */
+                padding-bottom: 1.5rem;
+            }
+             main {
+                padding-bottom: 1.5rem;
+            }
+            .content-section {
+                padding: 2rem;
+            }
+        }
+
+        @media (max-width: 600px) { /* Further adjustments for smaller mobile screens */
+            body {
+                font-size: 1.1rem;
+            }
+            header {
+                flex-direction: column;
+                align-items: flex-start; /* Title aligns to left */
+                /* justify-content: flex-start; If you want title and (hidden) nav to align left */
+                padding-top: 1rem;
+                padding-bottom: 1rem;
+                margin-bottom: 0.75rem;
+            }
+            header h1 {
+                font-size: 2.5rem; /* Slightly smaller H1 for small screens */
+                /* margin-bottom: 0; If nav is hidden, h1 might not need bottom margin if header padding is enough */
+            }
+            nav { /* Hide the nav element itself on small screens */
+                display: none;
+            }
+            /* nav ul { Removed as nav itself is hidden
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+            nav a {
+                display: block;
+                text-align: left;
+            } */
+            .content-section h2 {
+                font-size: 1.8rem; /* Smaller section titles for small screens */
+            }
+            .content-section p,
+            .content-section ul {
+                font-size: 1.4rem; /* Smaller paragraph text for small screens */
+            }
+        }
+         @media (max-width: 480px) { /* Example for even smaller screens if needed */
+            .container {
+                padding: 1rem;
+                padding-bottom: 1rem;
+            }
+            header h1 {
+                font-size: 2.2rem;
+            }
+            /* nav will still be hidden here due to the 600px rule */
+            .content-section h2 {
+                font-size: 1.6rem; /* Even smaller H2 */
+            }
+            .content-section p,
+            .content-section ul {
+                font-size: 1.3rem; /* Even smaller paragraphs */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Luke Sandell</h1>
+            <nav>
+                <ul>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#projects">Projects</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section id="about" class="content-section">
+                <h2>About Me</h2>
+                <p>
+                    I'm a technologist who enjoys the high- and low-level details of systems. I'm currently the lead software engineer for a small payment processing company.  I use .NET for my day job, but I am a Linux geek at heart. I'm the type of person who cares how their partitions are laid out on disk, if that means anything to you.
+                </p>
+                <p>
+                    Aside from business applications, I am interested in electronics and ham radio in particular. Radio allows me to combine my interest in computers and electroncis with a fascinating physical phenomenon. Radio propogation involves technology, physics, as well as environmental phenoma such as space weather and the ionosphere. No longer just old guys talking behind microphones and big antenna towers, many of us trek out to parks and peaks to make contacts across the globe using small radios that output less power than a light bulb. Some of us still use morse code due to its interesting properties. Here is a <a href="https://lasandell.github.io/pota">map</a> of my latest <a href="https://parksontheair.com/index.html">Parks on the Air</a> activations!
+                </p>
+            </section>
+
+            <section id="projects" class="content-section">
+                <h2>Projects</h2>
+                <p>
+                    I am a contributor to <a href="https://nixos.org/">NixOS</a>, a Linux distribution and package manager, and am a maintainer for <a href="https://repology.org/projects/?search=&maintainer=lasandell%40gmail.com&category=&inrepo=nix_unstable&notinrepo=&repos=&families=&repos_newest=&families_newest=">several packages</a> therein.
+                    I also maintain a supplemental <a href="https://github.com/lasandell/nixpkgs-radio">flake</a> that provides various packages relating to ham and software defined radio I didn't feel like contributing to the main nixpkgs repository. These can be installed on NixOS, or any Linux distribution using the Nix package manager.
+            </section>
+
+            <section id="contact" class="content-section">
+                <h2>Contact</h2>
+                <ul>
+                    <li>Email: <a href="mailto:lasandell@gmail.com">lasandell@gmail.com</a></li>
+                    <li>GitHub: <a href="https://github.com/lasandell">github.com/lasandell</a></li>
+                    <li>LinkedIn: <a href="https://www.linkedin.com/in/lasandell/">linkedin.com/in/lasandell</a></li>
+                </ul>
+            </section>
+        </main>
+
+        </div>
+
+    <script>
+        // Set current year in footer - This script is no longer needed as footer is removed
+        // document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
