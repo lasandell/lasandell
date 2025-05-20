@@ -83,6 +83,7 @@
             padding: 2.5rem; /* Increased padding */
             margin-bottom: 2.5rem; /* Increased margin */
             /* box-shadow: 0 0 15px rgba(0, 255, 65, 0.2); */ /* Removed box shadow */
+            position: relative; /* For potential absolute positioning of cursors if needed, though not used currently */
         }
         /* Remove margin from last content section */
         .content-section:last-child {
@@ -118,6 +119,23 @@
             color: #00FF41;
         }
 
+        /* Typing Cursor Style */
+        .typing-cursor {
+            display: inline-block;
+            background-color: rgba(0, 255, 65, 0.9); /* Green with slight transparency for "burn-in" hint */
+            width: 10px; 
+            height: 1em; /* Scales with current font size */
+            animation: blink 1s step-end infinite;
+            margin-left: 2px; /* Space after text */
+            vertical-align: baseline; /* Aligns well with text */
+        }
+
+        @keyframes blink {
+            0%, 100% { background-color: rgba(0, 255, 65, 0.9); } /* Cursor visible */
+            50% { background-color: transparent; } /* Cursor invisible */
+        }
+
+
         /* Footer styles removed */
 
         /* Responsive adjustments */
@@ -151,32 +169,25 @@
             header {
                 flex-direction: column;
                 align-items: flex-start; /* Title aligns to left */
-                /* justify-content: flex-start; If you want title and (hidden) nav to align left */
                 padding-top: 1rem;
                 padding-bottom: 1rem;
                 margin-bottom: 0.75rem;
             }
             header h1 {
                 font-size: 2.5rem; /* Slightly smaller H1 for small screens */
-                /* margin-bottom: 0; If nav is hidden, h1 might not need bottom margin if header padding is enough */
             }
             nav { /* Hide the nav element itself on small screens */
                 display: none;
             }
-            /* nav ul { Removed as nav itself is hidden
-                flex-direction: column;
-                gap: 0.8rem;
-            }
-            nav a {
-                display: block;
-                text-align: left;
-            } */
             .content-section h2 {
                 font-size: 1.8rem; /* Smaller section titles for small screens */
             }
             .content-section p,
             .content-section ul {
                 font-size: 1.4rem; /* Smaller paragraph text for small screens */
+            }
+             .typing-cursor { /* Adjust cursor width for smaller fonts if needed */
+                width: 8px;
             }
         }
          @media (max-width: 480px) { /* Example for even smaller screens if needed */
@@ -187,7 +198,6 @@
             header h1 {
                 font-size: 2.2rem;
             }
-            /* nav will still be hidden here due to the 600px rule */
             .content-section h2 {
                 font-size: 1.6rem; /* Even smaller H2 */
             }
@@ -242,10 +252,7 @@
         </div>
 
     <script>
-        // Set current year in footer - This script is no longer needed as footer is removed
-        // document.getElementById('currentYear').textContent = new Date().getFullYear();
-
-        // Smooth scrolling for navigation links
+        // Smooth scrolling for navigation links (if nav is visible)
         document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -256,6 +263,100 @@
                         behavior: 'smooth'
                     });
                 }
+            });
+        });
+
+        /**
+         * Types out the text content of a given HTML section.
+         * The HTML structure appears instantly, but its text nodes are typed out.
+         * @param {HTMLElement} sectionElement The section whose text content will be typed.
+         * @param {number} delayStart Milliseconds to wait before starting this section's animation.
+         */
+        function typeOutSectionText(sectionElement, delayStart = 0) {
+            const allTextNodes = [];
+            
+            // Recursive function to find all non-empty text nodes within the section
+            function getAllTextNodesRecursive(node) {
+                if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== "") {
+                    allTextNodes.push(node);
+                } else if (node.nodeType === Node.ELEMENT_NODE) {
+                    for (let i = 0; i < node.childNodes.length; i++) {
+                        getAllTextNodesRecursive(node.childNodes[i]);
+                    }
+                }
+            }
+            
+            getAllTextNodesRecursive(sectionElement);
+
+            // Store original texts and clear the text nodes for typing
+            const originalTexts = allTextNodes.map(node => {
+                const text = node.textContent;
+                node.textContent = ''; 
+                return text;
+            });
+
+            let currentNodeIndex = 0; // Index for allTextNodes array
+            let currentCharIndex = 0; // Index for characters within the current text node
+            let currentCursorElement = null; // Holds the current cursor span
+
+            function typeCharacter() {
+                if (currentNodeIndex >= allTextNodes.length) {
+                    if (currentCursorElement) currentCursorElement.remove(); // Remove final cursor
+                    return; // All text nodes in this section are typed
+                }
+
+                const currentTextNode = allTextNodes[currentNodeIndex];
+                const fullTextOfCurrentNode = originalTexts[currentNodeIndex];
+                const parentOfTextNode = currentTextNode.parentElement;
+
+                // Manage cursor: ensure it's in the correct parent and positioned
+                if (currentCursorElement && currentCursorElement.parentElement !== parentOfTextNode) {
+                    currentCursorElement.remove(); // Remove if parent changed
+                    currentCursorElement = null;
+                }
+                if (!currentCursorElement && parentOfTextNode) { // Create cursor if it doesn't exist or was removed
+                    currentCursorElement = document.createElement('span');
+                    currentCursorElement.className = 'typing-cursor';
+                    parentOfTextNode.appendChild(currentCursorElement); // Append to parent initially
+                }
+                
+                // Ensure cursor is always at the end of the parent element's current content flow
+                // or specifically after the text node being typed if that's more precise.
+                if (currentCursorElement && parentOfTextNode) {
+                     // Place cursor immediately after the text node, or at end of parent
+                    if (currentTextNode.nextSibling) {
+                        parentOfTextNode.insertBefore(currentCursorElement, currentTextNode.nextSibling);
+                    } else {
+                        parentOfTextNode.appendChild(currentCursorElement);
+                    }
+                }
+
+
+                if (currentCharIndex < fullTextOfCurrentNode.length) {
+                    currentTextNode.textContent += fullTextOfCurrentNode.charAt(currentCharIndex);
+                    currentCharIndex++;
+                    // Adjust scroll to keep typing visible if section overflows
+                    sectionElement.scrollTop = sectionElement.scrollHeight; 
+                    setTimeout(typeCharacter, 25 + Math.random() * 25); // Typing speed
+                } else {
+                    // Current text node is complete
+                    currentNodeIndex++;
+                    currentCharIndex = 0;
+                    // Brief pause before starting the next text node in the same section
+                    setTimeout(typeCharacter, 70); 
+                }
+            }
+
+            // Start the typing process for this section after the specified delay
+            setTimeout(typeCharacter, delayStart);
+        }
+
+        // Wait for the DOM to be fully loaded before starting animations
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach((section, index) => {
+                // Stagger the start of each section's typing animation
+                typeOutSectionText(section, index * 300); // e.g., 300ms stagger
             });
         });
     </script>
